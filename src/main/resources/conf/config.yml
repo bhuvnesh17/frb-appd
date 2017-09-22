@@ -1,0 +1,53 @@
+dbServers:
+    - displayName: ""
+      driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+      connectionUrl: "jdbc:sqlserver://localhost:1433;databaseName=XXXX;user=XXXX;password=XXXX"
+      #Needs to be used in conjunction with `encryptionKey`. Please read the extension documentation to generate encrypted password
+      #encryptedPassword: ""
+
+
+      queries:
+        - displayName: ""
+          queryStmt: "SELECT TRN_TARGET_OPERATION, TRN_FACADE_DURATION, TRN_ROUTER_DURATION
+                  FROM wingspan_ASG.dbo.ASG_TRANSACTIONS
+                  WHERE TRN_TARGET_OPERATION IN ('service_DigChannelInqSvcs_ListTransactionsV1','service_DigChannelInqSvcs_GetOLBEligAcctSummaryV4')
+                  AND TRN_TIMESTAMP >= {{previousTimestamp}} AND TRN_TIMESTAMP < {{currentTimestamp}}"
+          columns:
+            - name: "TRN_TARGET_OPERATION"
+              type: "metricPathName"
+
+            - name: "TRN_FACADE_DURATION"
+              type: "metricValue"
+
+            - name: "TRN_ROUTER_DURATION"
+              type: "metricValue"
+
+        - displayName: ""
+          queryStmt: "SELECT TRN_TARGET_OPERATION,TRN_ERROR_CODE,COUNT(TRN_ERROR_CODE) ERROR_CODE_COUNT
+                  FROM wingspan_ASG.dbo.ASG_TRANSACTIONS
+                  WHERE TRN_ERROR_CODE in (1001,7007,2021,2003,4002,7004)
+                  AND TRN_TARGET_OPERATION in ('service_DigChannelInqSvcs_ListTransactionsV1','service_DigChannelInqSvcs_GetOLBEligAcctSummaryV4')
+                  AND TRN_TIMESTAMP >= {{previousTimestamp}}  AND TRN_TIMESTAMP < {{currentTimestamp}}
+                  GROUP BY TRN_TARGET_OPERATION, TRN_ERROR_CODE"
+          columns:
+            - name: "TRN_TARGET_OPERATION"
+              type: "metricPathName"
+
+            - name: "TRN_ERROR_CODE"
+              type: "metricPathName"
+
+            - name: "ERROR_CODE_COUNT"
+              type: "metricValue"
+
+
+numberOfThreads: 5
+
+#Needs to be used in conjunction with `encryptedPassword`. Please read the extension documentation to generate encrypted password
+#encryptionKey: "welcome"
+
+
+# Make sure the metric prefix ends with a |
+#This will create this metric in all the tiers, under this path.
+#metricPrefix: "Custom Metrics|SQL|"
+#This will create it in specific Tier. Replace <ComponentID> with TierID
+metricPrefix: "Server|Component:<ComponentID>|Custom Metrics|Tibco ASG|"
