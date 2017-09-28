@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <mkdir dir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor"/>
+  <copy todir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor">
+    <fileset includes="monitor.xml" dir="src/main/resources/conf"/>
+    <fileset includes="config.yml" dir="src/main/resources/conf"/>
+  </copy>
+  <copy todir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor">
+    <fileset includes="frb-sql-monitoring-extension.jar" dir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target"/>
+  </copy>
+  <zip destfile="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor-1.0.2.zip">
+    <zipfileset prefix="FRB-SQLMonitor/" filemode="755" dir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor"/>
+  </zip>
+  <delete dir="/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/target/SQLMonitor"/>
+</target>
+</project>

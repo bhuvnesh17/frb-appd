@@ -39,26 +39,42 @@ public class SQLMonitorTask implements Runnable{
         Connection connection = null;
         if (queries != null && !queries.isEmpty()) {
             try{
-                connection = jdbcAdapter.open();
                 for(Map query : queries){
+                    connection = jdbcAdapter.open((String)server.get("driver"));
+
                     ResultSet resultSet = null;
                     try {
                         String queryDisplayName = (String)query.get("displayName");
                         String statement = (String) query.get("queryStmt");
                         statement = substitute(statement);
+
+//                        System.out.print(queryDisplayName + " : " + statement + "\n");
+
+
                         resultSet = jdbcAdapter.queryDatabase(connection, statement);
                         List<Column> columns = getColumns(query);
                         while (resultSet.next()) {
                             String metricName = "";
+                            boolean metricPathAlreadyAdded = false;
                             for(Column c : columns){
+
                                 if(c.getType().equals("metricPathName")){
+//                                    System.out.println("\n Column name: " +c.getName() + "");
+                                    if(metricPathAlreadyAdded == false){
                                     metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName) + METRIC_SEPARATOR + resultSet.getString(c.getName());
+//                                    System.out.println("MetricPathName: " + metricName);
+                                        metricPathAlreadyAdded = true;
+                                    }
+                                    else{
+                                         metricName = metricName + METRIC_SEPARATOR + resultSet.getString(c.getName());
+                                    }
+
                                 }
-//                                else if(c.getName().equals("type")){
-//                                    metricPrinter.printMetric(metricName,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
-//                                }
                                 else if(c.getType().equals("metricValue")){
-                                    metricPrinter.printMetric(metricName,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
+//                                    System.out.println("\n Column name: " +c.getName() + "");
+                                    String metricName1 = metricName +  METRIC_SEPARATOR + c.getName() ;
+                                    metricPrinter.printMetric(metricName1,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
+//                                    System.out.println("MetricValue: "+ metricName1 + "  Result : " +resultSet.getBigDecimal(c.getName()).toString());
                                 }
 
                             }
@@ -79,12 +95,14 @@ public class SQLMonitorTask implements Runnable{
             }
             catch(SQLException e){
                 logger.error("Unable to open the jdbc connection",e);
+            } catch (ClassNotFoundException e) {
+                logger.error("Unable to load the driver ",e);
             }
         }
     }
 
     private String getMetricPrefix(String dbServerDisplayName, String queryDisplayName) {
-        return metricPrefix + METRIC_SEPARATOR + dbServerDisplayName + METRIC_SEPARATOR + queryDisplayName;
+        return metricPrefix + METRIC_SEPARATOR + dbServerDisplayName + METRIC_SEPARATOR + queryDisplayName ;
     }
 
 
@@ -109,18 +127,6 @@ public class SQLMonitorTask implements Runnable{
         if (mapOfMaps.containsKey(filterKey)) {
             filteredOnKeyMap.put(filterKey,mapOfMaps.get(filterKey));
         }
-
-//        for (String s : mapOfMaps.keySet()) {
-//            String temp = s;
-//            if(s == "columns") {
-//                boolean bop = true;
-//            }
-//
-//            if (s == filterKey) {
-//                filteredOnKeyMap.put(s,mapOfMaps.get(s));
-//                break;
-//            }
-//        }
 
         return filteredOnKeyMap;
     }

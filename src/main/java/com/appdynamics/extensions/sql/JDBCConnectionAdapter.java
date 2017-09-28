@@ -16,8 +16,10 @@ public class JDBCConnectionAdapter {
         return new JDBCConnectionAdapter(connUrl);
     }
 
-    Connection open() throws SQLException {
+    Connection open(String driver) throws SQLException, ClassNotFoundException {
         Connection connection;
+        //System.out.println()
+        Class.forName(driver);
         connection = DriverManager.getConnection(connUrl);
         return connection;
     }

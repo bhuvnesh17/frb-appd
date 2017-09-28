@@ -115,6 +115,7 @@ public class SQLMonitor extends AManagedMonitor {
             String password = getPassword(encryptionKey,encryptionPassword);
             connUrl = connUrl.concat(";password="+password);
         }
+        Thread.currentThread().setContextClassLoader(AManagedMonitor.class.getClassLoader());
         JDBCConnectionAdapter jdbcAdapter = JDBCConnectionAdapter.create(connUrl);
         return new SQLMonitorTask.Builder()
                 .metricWriter(configuration.getMetricWriter())
