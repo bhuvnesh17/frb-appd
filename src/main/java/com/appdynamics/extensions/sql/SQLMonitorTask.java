@@ -99,60 +99,8 @@ public class SQLMonitorTask implements Runnable{
             return values;
         }
 
-//        private void goThroughResultSet(ResultSet resultSet, List<Column> columns,  String queryDisplayName) throws SQLException {
-//
-//        MetricPrinter metricPrinter = new MetricPrinter(metricWriter);
-//        while (resultSet.next()){
-//            String metricName = "";
-//            String dbServerDisplayName = (String) server.get("displayName");;
-//            boolean metricPathAlreadyAdded = false;
-//            for(Column c: columns){
-//
-//                if(c.getType().equals("metricPathName")){
-////                      System.out.println("\n Column name: " +c.getName() + "");
-//                    if(metricPathAlreadyAdded == false){
-//                        metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName) + METRIC_SEPARATOR + resultSet.getString(c.getName());
-////                      System.out.println("MetricPathName: " + metricName);
-//                        metricPathAlreadyAdded = true;
-//                    }
-//                    else{
-//                        metricName = metricName + METRIC_SEPARATOR + resultSet.getString(c.getName());
-//                    }
-//
-//                }
-//                else if(c.getType().equals("metricValue")){
-////                      System.out.println("\n Column name: " +c.getName() + "");
-//                    String metricName1 = metricName +  METRIC_SEPARATOR + c.getName() ;
-//                    metricPrinter.printMetric(metricName1,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
-////                      System.out.println("MetricValue: "+ metricName1 + "  Result : " +resultSet.getBigDecimal(c.getName()).toString());
-//                }
-//            }
-//
-//        }
-//
-//        }
 
-//        private void goOverColumns(ResultSet resultSet, String metricName,String dbServerDisplayName, String queryDisplayName, boolean metricPathAlreadyAdded, Column c,MetricPrinter metricPrinter) throws SQLException {
-//            if(c.getType().equals("metricPathName")){
-//                System.out.println("\n Column name: " +c.getName() + "");
-//                if(metricPathAlreadyAdded == false){
-//                    metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName) + METRIC_SEPARATOR + resultSet.getString(c.getName());
-//                    System.out.println("MetricPathName: " + metricName);
-//                    metricPathAlreadyAdded = true;
-//                }
-//                else{
-//                    metricName = metricName + METRIC_SEPARATOR + resultSet.getString(c.getName());
-//                }
-//
-//            }
-//            else if(c.getType().equals("metricValue")){
-//                System.out.println("\n Column name: " +c.getName() + "");
-//                String metricName1 = metricName +  METRIC_SEPARATOR + c.getName() ;
-//                metricPrinter.printMetric(metricName1,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
-//                System.out.println("MetricValue: "+ metricName1 + "  Result : " +resultSet.getBigDecimal(c.getName()).toString());
-//            }
-//
-//        }
+
         private ResultSet getResultSet(Connection connection, Map query) throws SQLException {
             String statement = (String) query.get("queryStmt");
             statement = substitute(statement);
@@ -161,104 +109,10 @@ public class SQLMonitorTask implements Runnable{
         }
 
         private Connection getConnection(Connection connection) throws SQLException, ClassNotFoundException {
+
             connection = jdbcAdapter.open((String)server.get("driver"));
             return connection;
         }
-
-
-//    public void run1() {
-//        MetricPrinter metricPrinter = new MetricPrinter(metricWriter);
-//        List<Map> queries = (List<Map>) server.get("queries");
-//        String dbServerDisplayName = (String) server.get("displayName");
-//        Connection connection = null;
-//        if (queries != null && !queries.isEmpty()) {
-//            try{
-//                for(Map query : queries){
-//                    connection = jdbcAdapter.open((String)server.get("driver"));
-//
-//                    ResultSet resultSet = null;
-//                    try {
-//                        String queryDisplayName = (String)query.get("displayName");
-//                        String statement = (String) query.get("queryStmt");
-//                        statement = substitute(statement);
-////                        System.out.print(queryDisplayName + " : " + statement + "\n");
-//                        resultSet = jdbcAdapter.queryDatabase(connection, statement);
-//                        List<Column> columns = getColumns(query);
-//                        while (resultSet.next()) {
-//                            String metricName = "";
-//                            boolean metricPathAlreadyAdded = false;
-//                            for(Column c : columns){
-//
-//                                if(c.getType().equals("metricPathName")){
-////                                    System.out.println("\n Column name: " +c.getName() + "");
-//                                    if(metricPathAlreadyAdded == false){
-//                                    metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName) + METRIC_SEPARATOR + resultSet.getString(c.getName());
-////                                    System.out.println("MetricPathName: " + metricName);
-//                                        metricPathAlreadyAdded = true;
-//                                    }
-//                                    else{
-//                                         metricName = metricName + METRIC_SEPARATOR + resultSet.getString(c.getName());
-//                                    }
-//
-//                                }
-//                                else if(c.getType().equals("metricValue")){
-////                                    System.out.println("\n Column name: " +c.getName() + "");
-//                                    String metricName1 = metricName +  METRIC_SEPARATOR + c.getName() ;
-//                                    metricPrinter.printMetric(metricName1,resultSet.getBigDecimal(c.getName()),c.getAggregationType(),c.getTimeRollupType(),c.getClusterRollupType());
-////                                    System.out.println("MetricValue: "+ metricName1 + "  Result : " +resultSet.getBigDecimal(c.getName()).toString());
-//                                }
-//
-//                            }
-//                        }
-//                    }
-//                    catch(SQLException e){
-//                        logger.error("Error in query execution",e);
-//                    }
-//                    finally {
-//                        if(resultSet != null){
-//                            resultSet.close();
-//                        }
-//                        if(connection != null){
-//                            connection.close();
-//                        }
-//                    }
-//                }
-//            }
-//            catch(SQLException e){
-//                logger.error("Unable to open the jdbc connection",e);
-//            } catch (ClassNotFoundException e) {
-//                logger.error("Unable to load the driver ",e);
-//            }
-//        }
-//    }
-
-//    private String getMetricPrefix(String dbServerDisplayName, String queryDisplayName) {
-//        return metricPrefix + METRIC_SEPARATOR + dbServerDisplayName + METRIC_SEPARATOR + queryDisplayName ;
-//    }
-
-
-//    private List<Column> getColumns(Map query) {
-//        AssertUtils.assertNotNull(query.get("columns"),"Queries need to have columns configured.");
-//
-//        Map<String, Map<String, String>> filter = Maps.newLinkedHashMap();
-//        filter = filterMap(query, "columns");
-//        final ObjectMapper mapper = new ObjectMapper(); // jackson’s objectmapper
-//        final Columns columns = mapper.convertValue(filter, Columns.class);
-//        return columns.getColumns();
-//    }
-//
-//    private Map<String, Map<String, String>> filterMap( Map<String, Map<String, String>> mapOfMaps, String filterKey) {
-//        Map<String, Map<String, String>> filteredOnKeyMap = Maps.newLinkedHashMap();
-//
-//        if (Strings.isNullOrEmpty(filterKey))
-//            return filteredOnKeyMap;
-//
-//        if (mapOfMaps.containsKey(filterKey)) {
-//            filteredOnKeyMap.put(filterKey,mapOfMaps.get(filterKey));
-//        }
-//
-//        return filteredOnKeyMap;
-//    }
 
     private String substitute(String statement) {
         String stmt = statement;

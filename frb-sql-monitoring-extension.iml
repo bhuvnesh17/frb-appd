@@ -12,6 +12,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Maven: com.vertica:vertica-jdbc:7.0.1-0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/vertica-jdbc-7.0.1-0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: com.appdynamics:machine-agent:3.7.11" level="project" />
     <orderEntry type="library" name="Maven: com.appdynamics:appd-exts-commons:1.6.6" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.6" level="project" />

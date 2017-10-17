@@ -67,10 +67,6 @@ public class SQLMonitorTaskTest {
     @Test
     public void testGetConnection() throws SQLException, ClassNotFoundException {
 
-//        private Connection getConnection(Connection connection) throws SQLException, ClassNotFoundException {
-//            connection = jdbcAdapter.open((String)server.get("driver"));
-//            return connection;
-//        }
         Map server = YmlReader.readFromFileAsMap(new File("src/test/resources/conf/config.yml"));
 
         Connection connection= mock(Connection.class);

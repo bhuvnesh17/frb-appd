@@ -14,6 +14,7 @@ import com.singularity.ee.agent.systemagent.api.TaskOutput;
 import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -107,16 +108,57 @@ public class SQLMonitor extends AManagedMonitor {
         }
     }
 
-    private SQLMonitorTask createTask(Map server) throws IOException {
+    private String createConnectionUrl (Map server){
+
+        String url = "jdbc:vertica://" + Util.convertToString(server.get("host"),"");
+        url += ":" + Util.convertToString(server.get("port"),"");
+        url += "/" + Util.convertToString(server.get("database"),"");
+        return url;
+    }
+    private String getPassword(Map server){
+
+//        String user = Util.convertToString(server.get("user"),"");
+//
+//        properties.put("ReadOnly", "true");
+//        if (!Strings.isNullOrEmpty(user)) {
+//            properties.put("user", user);
+//        }
+
+        String normal_password = Util.convertToString(server.get("password"),"");
         String encryptionPassword = Util.convertToString(server.get("encryptedPassword"),"");
         String encryptionKey = Util.convertToString(server.get("encryptionKey"),"");
-        String connUrl = Util.convertToString(server.get("connectionUrl"),"");
+        String password;
         if(!Strings.isNullOrEmpty(encryptionKey) && !Strings.isNullOrEmpty(encryptionPassword)){
-            String password = getPassword(encryptionKey,encryptionPassword);
-            connUrl = connUrl.concat(";password="+password);
+             password = getEncryptedPassword(encryptionKey,encryptionPassword);
         }
+        else{
+            password = normal_password;
+        }
+
+//            if (!Strings.isNullOrEmpty(password)) {
+//            properties.put("password", password);
+//        }
+
+        return password;
+
+    }
+
+    private SQLMonitorTask createTask(Map server) throws IOException {
+        String connUrl = createConnectionUrl(server);
+//        Properties properties = getProperties(server);
+
+//        String encryptionPassword = Util.convertToString(server.get("encryptedPassword"),"");
+//        String encryptionKey = Util.convertToString(server.get("encryptionKey"),"");
+//        if(!Strings.isNullOrEmpty(encryptionKey) && !Strings.isNullOrEmpty(encryptionPassword)){
+//            String password = getPassword(encryptionKey,encryptionPassword);
+//            connUrl = connUrl.concat(";password="+password);
+//        }
+
+        String user = Util.convertToString(server.get("user"),"");
+        String password = getPassword(server);
+
         Thread.currentThread().setContextClassLoader(AManagedMonitor.class.getClassLoader());
-        JDBCConnectionAdapter jdbcAdapter = JDBCConnectionAdapter.create(connUrl);
+        JDBCConnectionAdapter jdbcAdapter = JDBCConnectionAdapter.create(connUrl, user, password);
         return new SQLMonitorTask.Builder()
                 .metricWriter(configuration.getMetricWriter())
                 .metricPrefix(configuration.getMetricPrefix())
@@ -127,7 +169,7 @@ public class SQLMonitor extends AManagedMonitor {
 
     }
 
-    private String getPassword(String encryptionKey,String encryptedPassword) {
+    private String getEncryptedPassword(String encryptionKey,String encryptedPassword) {
         java.util.Map<String,String> cryptoMap = Maps.newHashMap();
         cryptoMap.put(PASSWORD_ENCRYPTED,encryptedPassword);
         cryptoMap.put(TaskInputArgs.ENCRYPTION_KEY,encryptionKey);
@@ -138,7 +180,9 @@ public class SQLMonitor extends AManagedMonitor {
 
         final SQLMonitor monitor = new SQLMonitor();
         final Map<String, String> taskArgs = new HashMap<String, String>();
-        taskArgs.put(CONFIG_ARG, "/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/src/test/resources/conf/config.yml");
+//        taskArgs.put(CONFIG_ARG, "/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/src/test/resources/conf/config.yml");
+
+        taskArgs.put(CONFIG_ARG, "/Users/bhuvnesh.kumar/repos/appdynamics/extensions/frb-sql-monitoring-extension/src/test/resources/conf/config_vertica.yml");
 
 //        monitor.execute(taskArgs, null);
 
