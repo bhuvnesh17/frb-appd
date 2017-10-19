@@ -43,12 +43,14 @@ public class SQLMonitorTask implements Runnable{
                     connection = getConnection(connection);
                     Map<String , BigDecimal> values = executeQuery(connection, query);
                     printData(values, metricPrinter);
-
+                    closeCurrentConnection(connection);
                 }
             } catch(SQLException e){
                 logger.error("Unable to open the jdbc connection",e);
             } catch (ClassNotFoundException e) {
                 logger.error("Unable to load the driver ",e);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -113,6 +115,11 @@ public class SQLMonitorTask implements Runnable{
             connection = jdbcAdapter.open((String)server.get("driver"));
             return connection;
         }
+
+    private void closeCurrentConnection(Connection connection) throws Exception {
+
+         jdbcAdapter.closeConnection(connection);
+    }
 
     private String substitute(String statement) {
         String stmt = statement;

@@ -55,6 +55,7 @@ public class MetricCollectorTest {
         List<Column> columns = columnGenerator.getColumns(queries);
 
         MetricCollector metricCollector = new MetricCollector(metricPrefix,dbServerDisplayName,queryDisplayName);
+
         Map<String , BigDecimal> resultFromAnswer = metricCollector.goThroughResultSet(resultSet,columns);
 
         BigDecimal value1 = BigDecimal.valueOf(7);

@@ -1,5 +1,6 @@
 package com.appdynamics.extensions.sql;
 
+import javax.xml.soap.Node;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +40,11 @@ public class MetricCollector {
                         metricPathAlreadyAdded = true;
                     }
                     else{
-                        metricName = metricName + METRIC_SEPARATOR + resultSet.getString(c.getName());
+                        String restOfthePath = resultSet.getString(c.getName());
+                        if(restOfthePath.contains(",")){
+                            restOfthePath = restOfthePath.replaceAll(",","-");
+                        }
+                        metricName = metricName + METRIC_SEPARATOR + restOfthePath;
                     }
 
                 }
@@ -47,7 +52,26 @@ public class MetricCollector {
 //                    System.out.println("\n Column name: " +c.getName() + "");
                     String metricName1 = metricName +  METRIC_SEPARATOR + c.getName() ;
 //                    System.out.println("MetricValue: "+ metricName1 + "  Result : " +resultSet.getBigDecimal(c.getName()).toString());
-                    values.put(metricName1, resultSet.getBigDecimal(c.getName()));
+                    String val = resultSet.getString(c.getName());
+
+
+//                  Checking for the Node_State, if yes then convert to number and add it
+
+                    int nodeStatusValue = getNodeStatusValue(val);
+
+                    if(nodeStatusValue != 6){
+                        BigDecimal bigDecimalNodeValue = new BigDecimal(nodeStatusValue);
+                        values.put(metricName1, bigDecimalNodeValue);
+
+                    }
+                    else {
+
+                        BigDecimal metric = percentSignFound(val, resultSet, c);
+
+                        values.put(metricName1, metric);
+                    }
+
+
                 }
             }
 
@@ -58,5 +82,36 @@ public class MetricCollector {
     private String getMetricPrefix(String dbServerDisplayName, String queryDisplayName) {
         return metricPrefix + METRIC_SEPARATOR + dbServerDisplayName + METRIC_SEPARATOR + queryDisplayName ;
     }
+
+    public enum NodeState {
+        INITIALIZING, UP, READY, UNSAFE, SHUTDOWN, RECOVERING
+    }
+    public int getNodeStatusValue(String name){
+        for (NodeState st : NodeState.values()) {
+            if (st.toString().equals(name)){
+                return st.ordinal();
+            }
+        }
+        return 6;
+    }
+
+
+    //                  To check if the string contains a percent sign, if so, remove it
+
+    private BigDecimal percentSignFound(String val, ResultSet resultSet,Column c ) throws SQLException {
+        String percentInValue = val.substring(val.length()-1, val.length());
+        BigDecimal bigDecimalValue;
+        if(percentInValue.equals("%")){
+            val = val.substring(0,val.length()-1);
+             bigDecimalValue = new BigDecimal(val);
+
+        }else {
+            bigDecimalValue = resultSet.getBigDecimal(c.getName());
+        }
+        return bigDecimalValue;
+
+    }
+
+
 
 }
