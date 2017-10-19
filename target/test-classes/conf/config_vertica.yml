@@ -140,15 +140,164 @@ dbServers:
             - name: "NODE_STATE"
               type: "metricValue"
 
-
+#
 #  NODE STATUS :
 # INITIALIZING : 0
 #           UP : 1
-#        READY : 2
-#       UNSAFE : 3
-#     SHUTDOWN : 4
-#   RECOVERING : 5
-#         NULL : 6
+#         DOWN : 2
+#        READY : 3
+#       UNSAFE : 4
+#     SHUTDOWN : 5
+#   RECOVERING : 6
+#         NULL : 7
+
+        - displayName: "QUERY_METRICS"
+          queryStmt: "Select NODE_NAME, ACTIVE_USER_SESSION_COUNT, ACTIVE_SYSTEM_SESSION_COUNT, TOTAL_USER_SESSION_COUNT, TOTAL_SYSTEM_SESSION_COUNT, TOTAL_ACTIVE_SESSION_COUNT, TOTAL_SESSION_COUNT, RUNNING_QUERY_COUNT, EXECUTED_QUERY_COUNT  from QUERY_METRICS "
+          columns:
+            - name: "NODE_NAME"
+              type: "metricPathName"
+
+            - name: "ACTIVE_USER_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "ACTIVE_SYSTEM_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_USER_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_SYSTEM_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_ACTIVE_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_SESSION_COUNT"
+              type: "metricValue"
+
+            - name: "RUNNING_QUERY_COUNT"
+              type: "metricValue"
+
+            - name: "EXECUTED_QUERY_COUNT"
+              type: "metricValue"
+
+        - displayName: "RESOURCE_USAGE"
+          queryStmt: "SELECT NODE_NAME, REQUEST_COUNT, LOCAL_REQUEST_COUNT, ACTIVE_THREAD_COUNT, OPEN_FILE_HANDLE_COUNT, MEMORY_REQUESTED_KB, ADDRESS_SPACE_REQUESTED_KB, WOS_USED_BYTES, WOS_ROW_COUNT, ROS_USED_BYTES, ROS_ROW_COUNT, TOTAL_ROW_COUNT, TOTAL_USED_BYTES, TOKENS_USED FROM RESOURCE_USAGE "
+          columns:
+            - name: "NODE_NAME"
+              type: "metricPathName"
+
+            - name: "REQUEST_COUNT"
+              type: "metricValue"
+
+            - name: "LOCAL_REQUEST_COUNT"
+              type: "metricValue"
+
+            - name: "ACTIVE_THREAD_COUNT"
+              type: "metricValue"
+
+            - name: "OPEN_FILE_HANDLE_COUNT"
+              type: "metricValue"
+
+            - name: "MEMORY_REQUESTED_KB"
+              type: "metricValue"
+
+            - name: "ADDRESS_SPACE_REQUESTED_KB"
+              type: "metricValue"
+
+            - name: "WOS_USED_BYTES"
+              type: "metricValue"
+
+            - name: "WOS_ROW_COUNT"
+              type: "metricValue"
+
+            - name: "ROS_USED_BYTES"
+              type: "metricValue"
+
+            - name: "ROS_ROW_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_ROW_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_USED_BYTES"
+              type: "metricValue"
+
+            - name: "TOKENS_USED"
+              type: "metricValue"
+
+        - displayName: "System_Resource_Usage"
+          queryStmt: "SELECT NODE_NAME, AVERAGE_MEMORY_USAGE_PERCENT, AVERAGE_CPU_USAGE_PERCENT, NET_RX_KBYTES_PER_SECOND, NET_TX_KBYTES_PER_SECOND, IO_READ_KBYTES_PER_SECOND, IO_WRITTEN_KBYTES_PER_SECOND FROM SYSTEM_RESOURCE_USAGE"
+          columns:
+            - name: "NODE_NAME"
+              type: "metricPathName"
+
+            - name: "AVERAGE_MEMORY_USAGE_PERCENT"
+              type: "metricValue"
+
+            - name: "AVERAGE_CPU_USAGE_PERCENT"
+              type: "metricValue"
+
+            - name: "NET_RX_KBYTES_PER_SECOND"
+              type: "metricValue"
+
+            - name: "NET_TX_KBYTES_PER_SECOND"
+              type: "metricValue"
+
+            - name: "IO_READ_KBYTES_PER_SECOND"
+              type: "metricValue"
+
+            - name: "IO_WRITTEN_KBYTES_PER_SECOND"
+              type: "metricValue"
+
+        - displayName: "System"
+          queryStmt: "SELECT CURRENT_EPOCH, AHM_EPOCH, LAST_GOOD_EPOCH, REFRESH_EPOCH, DESIGNED_FAULT_TOLERANCE, NODE_COUNT, NODE_DOWN_COUNT, CURRENT_FAULT_TOLERANCE, CATALOG_REVISION_NUMBER, WOS_USED_BYTES, WOS_ROW_COUNT, ROS_USED_BYTES, ROS_ROW_COUNT, TOTAL_USED_BYTES, TOTAL_ROW_COUNT FROM SYSTEM"
+          columns:
+            - name: "CURRENT_EPOCH"
+              type: "metricValue"
+
+            - name: "AHM_EPOCH"
+              type: "metricValue"
+
+            - name: "LAST_GOOD_EPOCH"
+              type: "metricValue"
+
+            - name: "REFRESH_EPOCH"
+              type: "metricValue"
+
+            - name: "DESIGNED_FAULT_TOLERANCE"
+              type: "metricValue"
+
+            - name: "NODE_COUNT"
+              type: "metricValue"
+
+            - name: "NODE_DOWN_COUNT"
+              type: "metricValue"
+
+            - name: "CURRENT_FAULT_TOLERANCE"
+              type: "metricValue"
+
+            - name: "CATALOG_REVISION_NUMBER"
+              type: "metricValue"
+
+            - name: "WOS_USED_BYTES"
+              type: "metricValue"
+
+            - name: "WOS_ROW_COUNT"
+              type: "metricValue"
+
+            - name: "ROS_USED_BYTES"
+              type: "metricValue"
+
+            - name: "ROS_ROW_COUNT"
+              type: "metricValue"
+
+            - name: "TOTAL_USED_BYTES"
+              type: "metricValue"
+
+            - name: "TOTAL_ROW_COUNT"
+              type: "metricValue"
+
 
 numberOfThreads: 5
 

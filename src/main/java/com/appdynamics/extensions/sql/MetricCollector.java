@@ -31,11 +31,13 @@ public class MetricCollector {
         while (resultSet.next()){
             String metricName = "";
             boolean metricPathAlreadyAdded = false;
+            metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName);
             for(Column c: columns){
+
                 if(c.getType().equals("metricPathName")){
 //                    System.out.println("\n Column name: " +c.getName() + "");
                     if(metricPathAlreadyAdded == false){
-                        metricName = getMetricPrefix(dbServerDisplayName,queryDisplayName) + METRIC_SEPARATOR + resultSet.getString(c.getName());
+                        metricName = metricName+ METRIC_SEPARATOR + resultSet.getString(c.getName());
 //                        System.out.println("MetricPathName: " + metricName);
                         metricPathAlreadyAdded = true;
                     }
@@ -58,10 +60,26 @@ public class MetricCollector {
 //                  Checking for the Node_State, if yes then convert to number and add it
 
                     int nodeStatusValue = getNodeStatusValue(val);
+/*
+#  NODE STATUS :
+# INITIALIZING : 0
+#           UP : 1
+#         DOWN : 2
+#        READY : 3
+#       UNSAFE : 4
+#     SHUTDOWN : 5
+#   RECOVERING : 6
+#         NULL : 7
+* */
+                    if(nodeStatusValue != 7){
+                        BigDecimal metric = new BigDecimal(nodeStatusValue);
+                        values.put(metricName1, metric);
+//                        System.out.println("metricName : " + metricName1 + " :   "+ metric);
 
-                    if(nodeStatusValue != 6){
-                        BigDecimal bigDecimalNodeValue = new BigDecimal(nodeStatusValue);
-                        values.put(metricName1, bigDecimalNodeValue);
+
+                    }
+                    else if(val== null){
+//                        System.out.println("metricName : " + metricName1 + " :   "+ "value is null");
 
                     }
                     else {
@@ -69,8 +87,9 @@ public class MetricCollector {
                         BigDecimal metric = percentSignFound(val, resultSet, c);
 
                         values.put(metricName1, metric);
-                    }
+//                        System.out.println("metricName : " + metricName1 + " :   "+ metric);
 
+                    }
 
                 }
             }
@@ -84,7 +103,7 @@ public class MetricCollector {
     }
 
     public enum NodeState {
-        INITIALIZING, UP, READY, UNSAFE, SHUTDOWN, RECOVERING
+        INITIALIZING, UP, DOWN, READY, UNSAFE, SHUTDOWN, RECOVERING
     }
     public int getNodeStatusValue(String name){
         for (NodeState st : NodeState.values()) {
